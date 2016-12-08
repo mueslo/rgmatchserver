@@ -1,0 +1,4 @@
+protobuf==2.6.1
+rgkit==0.5.3
+Twisted==16.1.1
+zope.interface==4.1.3

@@ -1,0 +1,56 @@
+option optimize_for = SPEED;
+
+package robotgame;
+
+message Settings {
+    required int32 player_id = 1;
+    message Map {
+        required int32 board_size = 1;
+        
+        message Coordinate {
+            required int32 x = 1;
+            required int32 y = 2;
+        }
+        repeated Coordinate obstacle_tiles = 2;
+        repeated Coordinate spawn_tiles = 3;
+    }
+    required Map map = 2;
+    optional int32 turns = 3 [default = 100];
+    optional int32 num_players = 4 [default = 2];
+    optional int32 spawn_period = 5 [default = 10];
+    optional int32 spawn_amount = 6 [default = 5];
+    optional bool symmetric = 7 [default = true];    
+}
+
+message State {
+    required int32 turn = 1;
+    message Bot {
+        required int32 id = 1;
+        required Settings.Map.Coordinate location = 2;
+        required int32 player_id = 3;
+        required int32 hp = 4;
+    }
+    repeated Bot bots = 2;
+}
+
+enum ActionType {
+    GUARD = 0;
+    MOVE = 1;
+    ATTACK = 2;
+    SUICIDE = 3;
+}
+
+message Actions {
+    required int32 turn = 1;
+    message Action {
+        required int32 bot_id = 1;
+        required Settings.Map.Coordinate location = 2;
+        required ActionType type = 3;
+        optional Settings.Map.Coordinate target = 4;
+    }
+    repeated Action actions = 2;
+}
+
+service TurnExecutionService {
+    rpc TurnExecution (Actions) returns (State);
+}
